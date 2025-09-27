@@ -10,6 +10,10 @@ class Collection(models.Model):
     title = models.CharField(max_length=255)
     featured_product = models.ForeignKey("Product", on_delete=models.SET_NULL, null=True, related_name='+')
 
+    
+    def __str__(self):
+        return self.title
+
 
 class Product(models.Model):
     title = models.CharField(max_length=255)
@@ -39,7 +43,7 @@ class Customer(models.Model):
     phone = models.CharField(max_length=255)
     birth_date = models.DateField(null=True)
     membership = models.CharField(max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE)
-
+    # order_set
 
 class Order(models.Model):
     PAYMENT_PENDING = 'P'

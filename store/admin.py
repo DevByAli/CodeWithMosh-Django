@@ -7,12 +7,12 @@ from urllib.parse import urlencode
 
 
 class InventoryFilter(admin.SimpleListFilter):
-    title = 'inventory'
+    title = 'inventory' # Filter title
     parameter_name = 'inventory'
     
     def lookups(self, request, model_admin):
         return [
-            ('<10', 'Low'),
+            ('<10', 'Low'), # (parameter_value, Filter Value)
             ('<20', 'Medium')
         ]
     

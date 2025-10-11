@@ -51,7 +51,9 @@ class PromotionAdmin(admin.ModelAdmin):
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ["first_name", "last_name", "email", "membership", "orders"]
     list_editable = ["membership"]
+    list_per_page = 10
     ordering = ["first_name", "last_name"]
+    search_fields = ['first_name__istartswith', 'last_name__istartswith', 'orders']
     
     @admin.display(ordering='orders')
     def orders(self, customer):

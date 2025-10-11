@@ -1,9 +1,26 @@
 from django.contrib import admin
 from . import models
-from django.db.models import Count
+from django.db.models import Count, QuerySet
 from django.utils.html import format_html
 from django.urls import reverse
 from urllib.parse import urlencode
+
+
+class InventoryFilter(admin.SimpleListFilter):
+    title = 'inventory'
+    parameter_name = 'inventory'
+    
+    def lookups(self, request, model_admin):
+        return [
+            ('<10', 'Low'),
+            ('<20', 'Medium')
+        ]
+    
+    def queryset(self, request, queryset: QuerySet):
+        if self.value() == '<10':
+            return queryset.filter(inventory__lt=10)
+        if self.value() == '<20':
+            return queryset.filter(inventory__lt=20, inventory__gt=10)
 
 
 @admin.register(models.Product)
@@ -12,6 +29,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_editable = ["unit_price"]
     list_select_related = ["collection"]
     list_per_page = 10
+    list_filter = ['collection', 'last_update', InventoryFilter]
 
     @admin.display(ordering="collection__title")
     def collection_title(self, product):
@@ -21,6 +39,8 @@ class ProductAdmin(admin.ModelAdmin):
     def inventory_status(self, product):
         if product.inventory < 10:
             return "Low"
+        elif product.inventory < 20:
+            return "Medium"
         return "Ok"
 
 

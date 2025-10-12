@@ -160,6 +160,7 @@ class OrderItemAdmin(admin.ModelAdmin):
     autocomplete_fields = ['product']
     exclude = ['order']
     list_display = ["order__id", "product", "quantiy", "unit_price"]
+    readonly_fields = ['unit_price']
         
     
 

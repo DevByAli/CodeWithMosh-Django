@@ -1,10 +1,9 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from . import models
 from django.db.models import Count, QuerySet
 from django.utils.html import format_html
 from django.urls import reverse
 from urllib.parse import urlencode
-
 
 class InventoryFilter(admin.SimpleListFilter):
     title = 'inventory' # Filter title
@@ -25,6 +24,7 @@ class InventoryFilter(admin.SimpleListFilter):
 
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
+    actions = ['clear_inventory']
     list_display = ["title", "unit_price", "inventory_status", "collection_title"]
     list_editable = ["unit_price"]
     list_select_related = ["collection"]
@@ -42,6 +42,16 @@ class ProductAdmin(admin.ModelAdmin):
         elif product.inventory < 20:
             return "Medium"
         return "Ok"
+    
+    
+    @admin.action(description="Clear inventory")
+    def clear_inventory(self, request, queryset: QuerySet):
+        updated_count = queryset.update(inventory=0)
+        self.message_user(
+            request,
+            f"{updated_count} products were successfully updated.",
+            messages.SUCCESS
+        )
 
 
 @admin.register(models.Collection)
@@ -69,6 +79,7 @@ class PromotionAdmin(admin.ModelAdmin):
 
 @admin.register(models.Customer)
 class CustomerAdmin(admin.ModelAdmin):
+    actions = ['delete_orders']
     list_display = ["first_name", "last_name", "email", "membership", "orders"]
     list_editable = ["membership"]
     list_per_page = 10
@@ -88,6 +99,23 @@ class CustomerAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(
             orders=Count('order')
+        )
+
+
+    @admin.action(description="Delete Orders")
+    def delete_orders(self, request, queryset: QuerySet):
+        orders = models.Order.objects.filter(customer__in=queryset)
+        order_items = models.OrderItem.objects.filter(order__in=orders)
+        
+        delete_count = orders.count()
+        
+        order_items.delete()
+        orders.delete()
+        
+        self.message_user(
+            request,
+            f"{delete_count} orders of customers deleted successfully.",
+            messages.SUCCESS
         )
 
 

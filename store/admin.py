@@ -25,11 +25,15 @@ class InventoryFilter(admin.SimpleListFilter):
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
     actions = ['clear_inventory']
+    autocomplete_fields = ['collection']
+    exclude = ['promotions'] # Only include exlude these fields
+    # fields = ['title', 'slug'] # Only includes these fields
     list_display = ["title", "unit_price", "inventory_status", "collection_title"]
     list_editable = ["unit_price"]
     list_select_related = ["collection"]
     list_per_page = 10
     list_filter = ['collection', 'last_update', InventoryFilter]
+    search_fields = ['title']
 
     @admin.display(ordering="collection__title")
     def collection_title(self, product):
@@ -56,7 +60,9 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(models.Collection)
 class CollectionAdmin(admin.ModelAdmin):
+    autocomplete_fields = ['featured_product']
     list_display = ["title", "product_count"]
+    search_fields = ['title']
 
     @admin.display(ordering="product_count")
     def product_count(self, collection):

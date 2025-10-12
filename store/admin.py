@@ -33,6 +33,9 @@ class ProductAdmin(admin.ModelAdmin):
     list_select_related = ["collection"]
     list_per_page = 10
     list_filter = ['collection', 'last_update', InventoryFilter]
+    prepopulated_fields = {
+        'slug': ['title']
+    }
     search_fields = ['title']
 
     @admin.display(ordering="collection__title")

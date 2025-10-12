@@ -135,7 +135,24 @@ class AddressAdmin(admin.ModelAdmin):
 
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ["id", "placed_at", "payment_status", "customer"]
+    list_display = ["id", "placed_at", "payment_status", "customer", "order_items"]
+
+
+    @admin.display(ordering='order_items')  
+    def order_items(self, order_model):
+        url = (
+            reverse('admin:store_orderitem_changelist')
+            + "?"
+            + urlencode({'order_id': str(order_model.id)})
+        )
+        
+        return format_html('<a href={}>{}</a>', url, order_model.order_items)
+        
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).annotate(
+            order_items=Count('orderitem__product')
+        )
 
 
 @admin.register(models.OrderItem)

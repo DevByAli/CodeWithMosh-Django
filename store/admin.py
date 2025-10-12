@@ -1,6 +1,6 @@
 from django.contrib import admin, messages
 from . import models
-from django.db.models import Count, QuerySet
+from django.db.models import Count, QuerySet, F
 from django.utils.html import format_html
 from django.urls import reverse
 from urllib.parse import urlencode
@@ -135,13 +135,16 @@ class AddressAdmin(admin.ModelAdmin):
 
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ["placed_at", "payment_status", "customer"]
+    list_display = ["id", "placed_at", "payment_status", "customer"]
 
 
 @admin.register(models.OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ["order", "product", "quantiy", "unit_price"]
-
+    autocomplete_fields = ['product']
+    exclude = ['order']
+    list_display = ["order__id", "product", "quantiy", "unit_price"]
+        
+    
 
 # Register your models here.
 # admin.site.register(models.Product, ProductAdmin)

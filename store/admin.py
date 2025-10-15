@@ -1,6 +1,7 @@
 from django.contrib import admin, messages
 from . import models
 from django.db.models import Count, QuerySet, F
+from django.db import transaction
 from django.utils.html import format_html
 from django.urls import reverse
 from urllib.parse import urlencode
@@ -113,19 +114,23 @@ class CustomerAdmin(admin.ModelAdmin):
 
     @admin.action(description="Delete Orders")
     def delete_orders(self, request, queryset: QuerySet):
-        orders = models.Order.objects.filter(customer__in=queryset)
-        order_items = models.OrderItem.objects.filter(order__in=orders)
         
-        delete_count = orders.count()
-        
-        order_items.delete()
-        orders.delete()
-        
-        self.message_user(
-            request,
-            f"{delete_count} orders of customers deleted successfully.",
-            messages.SUCCESS
-        )
+        with transaction.atomic():
+            customer_ids = queryset.values_list('id', flat=True)
+            
+            orders = models.Order.objects.filter(customer_id__in=customer_ids)
+            order_items = models.OrderItem.objects.filter(order__in=orders)
+            
+            delete_count = orders.count()
+            
+            order_items.delete()
+            orders.delete()
+            
+            self.message_user(
+                request,
+                f"{delete_count} orders of customers deleted successfully.",
+                messages.SUCCESS
+            )
 
 
 @admin.register(models.Address)

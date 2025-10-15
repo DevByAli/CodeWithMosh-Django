@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404
 from rest_framework.request import Request
 from rest_framework.response import Response
 from django.http import HttpResponse
@@ -10,7 +10,7 @@ from .serializers import ProductSerializer
 # Create your views here.
 @api_view()
 def products_list(request: Request):
-    products = Product.objects.all()
+    products = get_list_or_404(Product)
     serializer = ProductSerializer(products, many=True) # many=True if the queryset contain many objects
     
     return Response(data=serializer.data)

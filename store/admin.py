@@ -26,8 +26,8 @@ class InventoryFilter(admin.SimpleListFilter):
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
     actions = ['clear_inventory']
-    autocomplete_fields = ['collection']
-    exclude = ['promotions'] # Only include exlude these fields
+    autocomplete_fields = ['collection', 'promotions']
+    # exclude = ['promotions'] # Only include exlude these fields
     # fields = ['title', 'slug'] # Only includes these fields
     list_display = ["title", "unit_price", "inventory_status", "collection_title"]
     list_editable = ["unit_price"]
@@ -85,6 +85,7 @@ class CollectionAdmin(admin.ModelAdmin):
 @admin.register(models.Promotion)
 class PromotionAdmin(admin.ModelAdmin):
     list_display = ["description", "discount"]
+    search_fields = ['description']
 
 
 @admin.register(models.Customer)

@@ -139,10 +139,19 @@ class AddressAdmin(admin.ModelAdmin):
     list_display = ["street", "city", "customer"]
 
 
+class OrderItemInline(admin.TabularInline):
+    model = models.OrderItem
+    autocomplete_fields = ['product']
+    max_num = 10 # Max number items in form
+    min_num = 1 # Min number items in form
+    extra = 0 # How many place order items required initially
+
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
+    autocomplete_fields = ['customer']
     list_display = ["id", "placed_at", "payment_status", "customer", "order_items"]
-
+    inlines = [OrderItemInline]
+        
 
     @admin.display(ordering='order_items')  
     def order_items(self, order_model):

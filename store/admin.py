@@ -1,7 +1,5 @@
 from django.contrib import admin, messages
-from django.contrib.contenttypes.admin import GenericTabularInline
 from . import models
-from tags import models as TagModels
 from django.db.models import Count, QuerySet, F
 from django.db import transaction
 from django.utils.html import format_html
@@ -24,17 +22,12 @@ class InventoryFilter(admin.SimpleListFilter):
         if self.value() == '<20':
             return queryset.filter(inventory__lt=20, inventory__gt=10)
 
-class TagInline(GenericTabularInline):
-    model = TagModels.TaggedItem
-    autocomplete_fields = ['tag']
-
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
     actions = ['clear_inventory']
     autocomplete_fields = ['collection', 'promotions']
     # exclude = ['promotions'] # Only include exlude these fields
     # fields = ['title', 'slug'] # Only includes these fields
-    inlines = [TagInline]
     list_display = ["title", "unit_price", "inventory_status", "collection_title"]
     list_editable = ["unit_price"]
     list_select_related = ["collection"]

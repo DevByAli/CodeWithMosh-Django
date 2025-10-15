@@ -10,8 +10,10 @@ from .serializers import ProductSerializer
 # Create your views here.
 @api_view()
 def products_list(request: Request):
-
-    return Response(data='ok')
+    products = Product.objects.all()
+    serializer = ProductSerializer(products, many=True) # many=True if the queryset contain many objects
+    
+    return Response(data=serializer.data)
 
 
 @api_view()

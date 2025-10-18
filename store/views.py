@@ -27,13 +27,10 @@ def product_detail(request: Request, id: int):
 
     elif request.method == 'POST':
         product = ProductSerializer(data=request.data)
+        product.is_valid(raise_exception=True)
+        product.validated_data
+        return Response('ok')
         
-        if product.is_valid():
-            product.validated_data
-            return Response('ok')
-        else:
-            return Response(data=product.errors)
-
 
 
 @api_view()

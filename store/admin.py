@@ -60,7 +60,6 @@ class ProductAdmin(admin.ModelAdmin):
             messages.SUCCESS
         )
 
-
 @admin.register(models.Collection)
 class CollectionAdmin(admin.ModelAdmin):
     autocomplete_fields = ['featured_product']

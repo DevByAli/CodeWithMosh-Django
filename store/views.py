@@ -18,12 +18,22 @@ def products_list(request: Request):
     return Response(data=serializer.data)
 
 
-@api_view()
+@api_view(['GET', 'POST'])
 def product_detail(request: Request, id: int):
-    product = get_object_or_404(Product, pk=id)
-    serializer = ProductSerializer(product)
-    
-    return Response(data=serializer.data)
+    if request.method == 'GET':
+        product = get_object_or_404(Product, pk=id)
+        serializer = ProductSerializer(product)
+        return Response(data=serializer.data)
+
+    elif request.method == 'POST':
+        product = ProductSerializer(data=request.data)
+        
+        if product.is_valid():
+            product.validated_data
+            return Response('ok')
+        else:
+            return Response(data=product.errors)
+
 
 
 @api_view()

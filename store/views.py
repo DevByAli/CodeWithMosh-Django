@@ -18,18 +18,24 @@ def products_list(request: Request):
     return Response(data=serializer.data)
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST', 'PUT'])
 def product_detail(request: Request, id: int):
+    product = get_object_or_404(Product, pk=id)
     if request.method == 'GET':
-        product = get_object_or_404(Product, pk=id)
         serializer = ProductSerializer(product)
         return Response(data=serializer.data)
 
     elif request.method == 'POST':
-        product = ProductSerializer(data=request.data)
-        product.is_valid(raise_exception=True)
-        return Response(data=request.data)
-        
+        new_product = ProductSerializer(data=request.data)
+        new_product.is_valid(raise_exception=True)
+        new_product.save()
+        return Response(data=new_product.data)
+    
+    elif request.method == 'PUT':
+        update_product = ProductSerializer(product, data=request.data, partial=True) # partial=True means some fields to update
+        update_product.is_valid(raise_exception=True)
+        update_product.save()
+        return Response(data=update_product.data)
 
 
 @api_view()

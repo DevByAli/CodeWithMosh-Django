@@ -16,16 +16,10 @@ class ProductSerializer(serializers.ModelSerializer):
         # Order of fields matter.
         # Include the fields in 'fields' list if it is customized like 'unit_price_with_tax'
         # NOT RECOMMENDED: fields = '__all__'
-        fields = ['id', 'title', 'unit_price', 'unit_price_with_tax', 'collection']
+        fields = ['id', 'title', 'description', 'unit_price', 'inventory', 'unit_price_with_tax', 'collection']
         
     unit_price_with_tax = serializers.SerializerMethodField(method_name='get_unit_price_with_tax') # method_name is required when method_name != "get_{field_name}"
 
     
     def get_unit_price_with_tax(self, product: Product):
         return product.unit_price * Decimal(1.1)
-    
-    
-    def validate(self, data):
-        if data.get('title') != 'Test':
-            raise serializers.ValidationError(detail='Title is not test.', code=400)
-        return data

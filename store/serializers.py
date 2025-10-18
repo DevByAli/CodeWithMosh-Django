@@ -23,3 +23,9 @@ class ProductSerializer(serializers.ModelSerializer):
     
     def get_unit_price_with_tax(self, product: Product):
         return product.unit_price * Decimal(1.1)
+    
+    
+    def validate(self, data):
+        if data.get('title') != 'Test':
+            raise serializers.ValidationError(detail='Title is not test.', code=400)
+        return data

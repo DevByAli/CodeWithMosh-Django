@@ -28,8 +28,7 @@ def product_detail(request: Request, id: int):
     elif request.method == 'POST':
         product = ProductSerializer(data=request.data)
         product.is_valid(raise_exception=True)
-        product.validated_data
-        return Response('ok')
+        return Response(data=request.data)
         
 
 

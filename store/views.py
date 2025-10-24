@@ -4,8 +4,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import HttpResponse
 from rest_framework.decorators import api_view
-from .models import Product
-from .serializers import ProductSerializer
+from django.db.models import Count
+from .models import Product, Collection
+from .serializers import ProductSerializer, CollectionSerializer
 
 
 # Create your views here.
@@ -47,5 +48,24 @@ def product_detail(request: Request, id: int):
 
 
 @api_view()
-def collection_details(request: Request, pk: int):
-    return Response('ok')
+def collection_list(request: Request):
+    queryset = Collection.objects.annotate(product_count=Count('products'))
+    collections = get_list_or_404(queryset)
+    serilizer = CollectionSerializer(collections, many=True)
+    return Response(data=serilizer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET', 'POST', 'PUT'])
+def collection_details(request: Request, pk):
+    
+    queryset = Collection.objects.annotate(product_count=Count('products'))
+    collection = get_object_or_404(queryset, pk=pk)
+    
+    if request.method == 'GET':
+        serializer = CollectionSerializer(collection)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+        
+    elif request.method == 'POST':
+        new_collection = CollectionSerializer(data=request.data)
+        new_collection.is_valid(raise_exception=True)
+        new_collection.save()
+        return Response(data=new_collection.data, status=status.HTTP_201_CREATED)

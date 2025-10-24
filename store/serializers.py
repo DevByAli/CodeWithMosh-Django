@@ -1,12 +1,18 @@
 from rest_framework import serializers
-from .models import Product, Collection
 from decimal import Decimal
+from .models import Product, Collection
 
 
 class CollectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id', 'title']
+        fields = ['id', 'title', 'product_count']
+    
+    product_count = serializers.IntegerField(default=0)
+    
+    def create(self, validated_data):
+        validated_data.pop('product_count')
+        return Collection.objects.create(**validated_data)
     
 
 class ProductSerializer(serializers.ModelSerializer):

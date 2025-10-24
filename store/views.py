@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, get_list_or_404
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework import status
 from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from .models import Product
@@ -18,7 +19,7 @@ def products_list(request: Request):
     return Response(data=serializer.data)
 
 
-@api_view(['GET', 'POST', 'PUT'])
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def product_detail(request: Request, id: int):
     product = get_object_or_404(Product, pk=id)
     if request.method == 'GET':
@@ -36,6 +37,13 @@ def product_detail(request: Request, id: int):
         update_product.is_valid(raise_exception=True)
         update_product.save()
         return Response(data=update_product.data)
+    elif request.method == 'DELETE':
+        if product.orderitem.count() > 0:
+            return Response(
+                {"error": "Product cannot delete b/c some of the orderitems associated with it."},
+                status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view()

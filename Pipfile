@@ -5,12 +5,12 @@ name = "pypi"
 
 [packages]
 django = "*"
-django-debug-toolbar = "*"
 mysqlclient = "*"
-faker = "*"
 djangorestframework = "*"
 
 [dev-packages]
+django-debug-toolbar = "*"
+faker = "*"
 
 [requires]
 python_version = "3.13"

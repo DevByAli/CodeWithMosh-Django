@@ -3,6 +3,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import HttpResponse
+from rest_framework.mixins import ListModelMixin, CreateModelMixin
+from rest_framework.generics import ListCreateAPIView
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from django.db.models import Count
@@ -10,19 +12,33 @@ from .models import Product, Collection
 from .serializers import ProductSerializer, CollectionSerializer
 
 
-class ProductList(APIView):
-    def get(self, request: Request):
-        queryset = Product.objects.select_related('collection')
-        products = get_list_or_404(queryset)
-        serializer = ProductSerializer(products, many=True, context={'request': request})
-        return Response(serializer.data)
+class ProductList(ListCreateAPIView):
+    """
+    get and post methods are implemented in ListCreateAPIView that import that 
+    ListModelMixin and CreateModelMixin.
+    We just need to define the queryset, serializer_class and serializer_context.
+    """
+    def get_queryset(self):
+        return Product.objects.select_related('collection').all()
+    
+    def get_serializer_class(self):
+        return ProductSerializer
+    
+    def get_serializer_context(self):
+        return {'request': self.request}
+    
+    # def get(self, request: Request):
+    #     queryset = Product.objects.select_related('collection')
+    #     products = get_list_or_404(queryset)
+    #     serializer = ProductSerializer(products, many=True, context={'request': request})
+    #     return Response(serializer.data)
     
     
-    def post(self, request: Request):
-        new_product = ProductSerializer(data=request.data)
-        new_product.is_valid(raise_exception=True)
-        new_product.save()
-        return Response(data=new_product.data)
+    # def post(self, request: Request):
+    #     new_product = ProductSerializer(data=request.data)
+    #     new_product.is_valid(raise_exception=True)
+    #     new_product.save()
+    #     return Response(data=new_product.data)
 
 
 class ProductDetail(APIView):

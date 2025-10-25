@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import HttpResponse
 from rest_framework.mixins import ListModelMixin, CreateModelMixin
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from django.db.models import Count
@@ -30,19 +30,10 @@ class ProductList(ListCreateAPIView):
         return {'request': self.request}
 
 
-class ProductDetail(APIView):
-    def get(self, request: Request, id: int):
-        product = get_object_or_404(Product, pk=id)
-        serializer = ProductSerializer(product)
-        return Response(data=serializer.data)
-    
-    
-    def put(self, request: Request, id: int):
-        product = get_object_or_404(Product, pk=id)
-        update_product = ProductSerializer(product, data=request.data, partial=True) # partial=True means some fields to update
-        update_product.is_valid(raise_exception=True)
-        update_product.save()
-        return Response(data=update_product.data)
+class ProductDetail(RetrieveUpdateDestroyAPIView):
+    queryset = Product
+    serializer_class = ProductSerializer
+    lookup_field = 'id'
     
     
     def delete(self, request: Request, id: int):
@@ -57,26 +48,24 @@ class ProductDetail(APIView):
     
 
 
-class CollectionList(APIView):
-    def get(self, request: Request):
-        queryset = Collection.objects.annotate(product_count=Count('products'))
-        collections = get_list_or_404(queryset)
-        serilizer = CollectionSerializer(collections, many=True)
-        return Response(data=serilizer.data, status=status.HTTP_200_OK)
-        
-        
-    def post(self, request: Request):
-        new_collection = CollectionSerializer(data=request.data)
-        new_collection.is_valid(raise_exception=True)
-        new_collection.save()
-        return Response(data=new_collection.data, status=status.HTTP_201_CREATED)
+class CollectionList(ListCreateAPIView):
+    queryset = Collection.objects.annotate(product_count=Count('products'))
+    serializer_class = CollectionSerializer
 
 
 
-class CollectionDetail(APIView):
-    def get(self, request: Request, pk: int):
-        queryset = Collection.objects.annotate(product_count=Count('products'))
-        collection = get_object_or_404(queryset, pk=pk)
-        serilizer = CollectionSerializer(collection)
-
-        return Response(data=serilizer.data)
+class CollectionDetail(RetrieveUpdateDestroyAPIView):
+    queryset = Collection.objects.annotate(product_count=Count('products'))
+    serializer_class = CollectionSerializer
+    lookup_field = 'pk'
+    
+    
+    def delete(self, request: Request, pk: int):
+        collection = get_object_or_404(self.queryset, pk=pk)
+        if collection.products.count() > 0:
+            return Response(
+                {"error": "Collection cannot delete b/c some of the products associated with it."},
+                status=status.HTTP_405_METHOD_NOT_ALLOWED)
+            
+        collection.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

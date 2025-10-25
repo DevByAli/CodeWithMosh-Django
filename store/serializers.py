@@ -8,11 +8,7 @@ class CollectionSerializer(serializers.ModelSerializer):
         model = Product
         fields = ['id', 'title', 'product_count']
     
-    product_count = serializers.IntegerField(default=0)
-    
-    def create(self, validated_data):
-        validated_data.pop('product_count')
-        return Collection.objects.create(**validated_data)
+    product_count = serializers.IntegerField(default=0, read_only=True) # read_only make the field not required during creating the collection
     
 
 class ProductSerializer(serializers.ModelSerializer):

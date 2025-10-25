@@ -33,11 +33,10 @@ class ProductList(ListCreateAPIView):
 class ProductDetail(RetrieveUpdateDestroyAPIView):
     queryset = Product
     serializer_class = ProductSerializer
-    lookup_field = 'id'
     
     
-    def delete(self, request: Request, id: int):
-        product = get_object_or_404(Product, pk=id)
+    def delete(self, request: Request, pk: int):
+        product = get_object_or_404(Product, pk=pk)
         if product.orderitem.count() > 0:
             return Response(
                 {"error": "Product cannot delete b/c some of the orderitems associated with it."},
@@ -57,7 +56,6 @@ class CollectionList(ListCreateAPIView):
 class CollectionDetail(RetrieveUpdateDestroyAPIView):
     queryset = Collection.objects.annotate(product_count=Count('products'))
     serializer_class = CollectionSerializer
-    lookup_field = 'pk'
     
     
     def delete(self, request: Request, pk: int):

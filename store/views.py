@@ -5,12 +5,18 @@ from rest_framework import status
 from django.http import HttpResponse
 from rest_framework.mixins import ListModelMixin, CreateModelMixin
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from django.db.models import Count
 from .models import Product, Collection
 from .serializers import ProductSerializer, CollectionSerializer
 
+
+class CustomPagination(PageNumberPagination):
+    page_size = 10  # Number of items per page
+    page_size_query_param = 'page_size'  # Allow client to specify page size
+    max_page_size = 100 # Maximum page size allowed
 
 class ProductList(ListCreateAPIView):
     """
@@ -25,6 +31,7 @@ class ProductList(ListCreateAPIView):
     
     queryset = Product.objects.select_related('collection').all()
     serializer_class = ProductSerializer
+    pagination_class = CustomPagination
     
     def get_serializer_context(self):
         return {'request': self.request}

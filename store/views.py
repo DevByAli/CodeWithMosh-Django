@@ -57,6 +57,7 @@ class ProductDetail(RetrieveUpdateDestroyAPIView):
 class CollectionList(ListCreateAPIView):
     queryset = Collection.objects.annotate(product_count=Count('products'))
     serializer_class = CollectionSerializer
+    pagination_class = CustomPagination
 
 
 

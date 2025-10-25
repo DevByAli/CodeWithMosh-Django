@@ -17,28 +17,17 @@ class ProductList(ListCreateAPIView):
     get and post methods are implemented in ListCreateAPIView that import that 
     ListModelMixin and CreateModelMixin.
     We just need to define the queryset, serializer_class and serializer_context.
+
+    NOTE:
+    - Use methods if there is login to get these. e.g; Get the queryset based on the user role etc.
+    - get the serializer based on the login user role.
     """
-    def get_queryset(self):
-        return Product.objects.select_related('collection').all()
     
-    def get_serializer_class(self):
-        return ProductSerializer
+    queryset = Product.objects.select_related('collection').all()
+    serializer_class = ProductSerializer
     
     def get_serializer_context(self):
         return {'request': self.request}
-    
-    # def get(self, request: Request):
-    #     queryset = Product.objects.select_related('collection')
-    #     products = get_list_or_404(queryset)
-    #     serializer = ProductSerializer(products, many=True, context={'request': request})
-    #     return Response(serializer.data)
-    
-    
-    # def post(self, request: Request):
-    #     new_product = ProductSerializer(data=request.data)
-    #     new_product.is_valid(raise_exception=True)
-    #     new_product.save()
-    #     return Response(data=new_product.data)
 
 
 class ProductDetail(APIView):

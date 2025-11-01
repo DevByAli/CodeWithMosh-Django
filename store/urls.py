@@ -1,17 +1,23 @@
 from django.urls import path
-from rest_framework.routers import SimpleRouter, DefaultRouter
+from rest_framework_nested import routers
 from pprint import pprint
 from . import views
 
 
-# router = SimpleRouter()
-router = DefaultRouter()
+router = routers.DefaultRouter()
 
 router.register('products', views.ProductViewSet)
 router.register('collections', views.CollectionViewSet)
 
-urlpatterns = router.urls
+"""
+DOCS: for nested router search here: https://github.com/alanjds/drf-nested-routers
+"""
+product_router = routers.NestedSimpleRouter(router, 'products', lookup='product')
+product_router.register('reviews', views.ReviewViewSet, basename='product-reviews')
 
+urlpatterns = router.urls + product_router.urls
+
+pprint(urlpatterns)
 # urlpatterns = [
 #     path('products/', views.ProductList.as_view()),
 #     path('products/<int:pk>/', views.ProductDetail.as_view()),

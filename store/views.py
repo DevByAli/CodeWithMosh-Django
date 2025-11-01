@@ -53,5 +53,11 @@ class CollectionViewSet(ModelViewSet):
     
     
 class ReviewViewSet(ModelViewSet):
-    queryset = Review.objects.all()
+    # queryset = Review.objects.all() # This is returning all the reviews in db 
     serializer_class = ReviewSerializer
+    
+    def get_queryset(self):
+        return Review.objects.filter(product__id=self.kwargs['product_pk'])
+    
+    def get_serializer_context(self):
+        return {'product_id': self.kwargs['product_pk']} # This is the loopup=product in urls, here 'product' is the prefix

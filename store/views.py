@@ -13,6 +13,7 @@ from rest_framework.views import APIView
 from django.db.models import Count
 from .models import *
 from .serializers import *
+from .filter import *
 
 
 class CustomPagination(PageNumberPagination):
@@ -26,7 +27,8 @@ class ProductViewSet(ModelViewSet):
     serializer_class = ProductSerializer
     pagination_class = CustomPagination
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['collection_id', 'inventory']
+    filterset_class = ProductFilter
+    # filterset_fields = ['collection_id', 'inventory']
 
     
     def get_serializer_context(self):

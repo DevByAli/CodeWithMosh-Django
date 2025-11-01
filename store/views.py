@@ -1,15 +1,9 @@
-from django.shortcuts import get_object_or_404, get_list_or_404
-from rest_framework.request import Request
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
-from django.http import HttpResponse
-from rest_framework.mixins import ListModelMixin, CreateModelMixin
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.filters import SearchFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.decorators import api_view
-from rest_framework.views import APIView
 from django.db.models import Count
 from .models import *
 from .serializers import *
@@ -26,8 +20,9 @@ class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     pagination_class = CustomPagination
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = ProductFilter
+    search_fields = ['title', 'description']
     # filterset_fields = ['collection_id', 'inventory']
 
     

@@ -62,7 +62,7 @@ class ReviewViewSet(ModelViewSet):
 """
 We don't want the update, list feature. So only import these.
 """
-class CartViewSet(CreateModelMixin, RetrieveModelMixin, GenericViewSet):
+class CartViewSet(CreateModelMixin, RetrieveModelMixin, DestroyModelMixin, GenericViewSet):
     """
     'prefetch_related' is used for one-to-many relations
     'select_related' is used for one-to-one relations 

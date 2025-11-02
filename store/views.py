@@ -3,23 +3,16 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.viewsets import ModelViewSet
 from .models import *
 from .serializers import *
 from .filter import *
-
-
-class CustomPagination(PageNumberPagination):
-    page_size = 10  # Number of items per page
-    page_size_query_param = 'page_size'  # Allow client to specify page size
-    max_page_size = 100 # Maximum page size allowed
-    
+from .pagination import *
   
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    pagination_class = CustomPagination
+    pagination_class = DefaultPagination
     # pagination_class = PageNumberPagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = ProductFilter
@@ -43,7 +36,7 @@ class ProductViewSet(ModelViewSet):
 class CollectionViewSet(ModelViewSet):
     queryset = Collection.objects.annotate(product_count=Count('products'))
     serializer_class = CollectionSerializer
-    pagination_class = CustomPagination
+    pagination_class = DefaultPagination
     
     
     def destroy(self, request, *args, **kwargs):

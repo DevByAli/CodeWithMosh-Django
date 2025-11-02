@@ -67,5 +67,5 @@ class CartViewSet(CreateModelMixin, RetrieveModelMixin, GenericViewSet):
     'prefetch_related' is used for one-to-many relations
     'select_related' is used for one-to-one relations 
     """
-    queryset = Cart.objects.prefetch_related('items').all()
+    queryset = Cart.objects.prefetch_related('items__product').all()
     serializer_class = CartSerializer

@@ -1,14 +1,15 @@
 from django.db.models import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
+from rest_framework.mixins import *
 from rest_framework import status
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from .models import *
 from .serializers import *
 from .filter import *
 from .pagination import *
-  
+
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -46,8 +47,8 @@ class CollectionViewSet(ModelViewSet):
                 status=status.HTTP_405_METHOD_NOT_ALLOWED)
             
         return super().destroy(request, *args, **kwargs)
-    
-    
+
+
 class ReviewViewSet(ModelViewSet):
     # queryset = Review.objects.all() # This is returning all the reviews in db 
     serializer_class = ReviewSerializer
@@ -57,3 +58,14 @@ class ReviewViewSet(ModelViewSet):
     
     def get_serializer_context(self):
         return {'product_id': self.kwargs['product_pk']} # This is the loopup=product in urls, here 'product' is the prefix
+
+"""
+We don't want the update, list feature. So only import these.
+"""
+class CartViewSet(CreateModelMixin, RetrieveModelMixin, GenericViewSet):
+    """
+    'prefetch_related' is used for one-to-many relations
+    'select_related' is used for one-to-one relations 
+    """
+    queryset = Cart.objects.prefetch_related('items').all()
+    serializer_class = CartSerializer

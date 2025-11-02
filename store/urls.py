@@ -8,12 +8,17 @@ router = routers.DefaultRouter()
 
 router.register('products', views.ProductViewSet, basename='product')
 router.register('collections', views.CollectionViewSet)
+router.register('cart', views.CartViewSet)
 
 """
 DOCS: for nested router search here: https://github.com/alanjds/drf-nested-routers
 """
 product_router = routers.NestedSimpleRouter(router, 'products', lookup='product')
 product_router.register('reviews', views.ReviewViewSet, basename='product-reviews')
+
+# cart_router = routers.NestedDefaultRouter(router, 'cart', lookup='cart')
+# cart_router.register('items', views.CartItemViewSet, basename='cart-items')
+
 
 urlpatterns = router.urls + product_router.urls
 

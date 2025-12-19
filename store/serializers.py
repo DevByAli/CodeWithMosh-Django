@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from decimal import Decimal
 from django.shortcuts import *
@@ -47,7 +48,7 @@ class SimpleProductSerializer(serializers.ModelSerializer):
 
         
 class CartItemSerializer(serializers.ModelSerializer):
-    product = SimpleProductSerializer()
+    product = SimpleProductSerializer(read_only=True)
     total_price = serializers.SerializerMethodField()
     
     def get_total_price(self, cart_item: CartItem):
@@ -69,3 +70,35 @@ class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
         fields = ['id', 'items', 'total_price']
+        
+
+class AddCartItemSerializer(serializers.ModelSerializer):
+    product_id = serializers.IntegerField()
+    
+    # validate_{field_name} is the to validate a particular field
+    # def validate_product_id(self, value):
+    #     if not Product.objects.filter(pk=value).exists():
+    #         raise serializers.ValidationError(detail="Product of given ID was not found", code=404)
+    #     return value
+        
+    
+    def save(self, **kwargs):
+        product_id = self.validated_data['product_id']
+        quantity = self.validated_data['quantity']
+        cart_id = self.context['cart_id']
+
+        get_object_or_404(Product, pk=product_id)
+        
+        try:
+            cart_item = CartItem.objects.get(cart_id=cart_id)
+            cart_item.quantity += quantity
+            cart_item.save()
+            
+            self.instance = cart_item
+        except CartItem.DoesNotExist:
+            self.instance = CartItem.objects.create(cart_id=cart_id, **self.validated_data)
+        
+        return self.instance
+    class Meta:
+        model = CartItem
+        fields = ['id', 'product_id', 'quantity']

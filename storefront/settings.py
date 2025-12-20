@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -160,15 +161,17 @@ REST_FRAMEWORK = {
     # 'PAGE_SIZE_QUERY_PARAM': 'page_size'
 }
 
+# https://django-rest-framework-simplejwt.readthedocs.io/en/latest/settings.html
 SIMPLE_JWT = {
     # Here JWT is the prefix of token like Bearer
-   'AUTH_HEADER_TYPES': ('JWT',),
+    'AUTH_HEADER_TYPES': ('JWT',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=5),
 }
 
 # This is now the AUTH USER Model going to use.
 AUTH_USER_MODEL = 'core.User'
 
-
+# https://djoser.readthedocs.io/en/latest/getting_started.html
 DJOSER = {
     'SERIALIZERS': {
         'user_create': 'core.serializers.UserCreatePasswordRetypeSerializer'

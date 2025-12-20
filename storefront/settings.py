@@ -42,9 +42,9 @@ INSTALLED_APPS = [
     "debug_toolbar",
     'playground',
     'store',
-    'store_custom',
     'tags',
     'likes',
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -155,3 +155,6 @@ REST_FRAMEWORK = {
     # 'PAGE_SIZE': 10,
     # 'PAGE_SIZE_QUERY_PARAM': 'page_size'
 }
+
+# This is now the AUTH USER Model going to use.
+AUTH_USER_MODEL = 'core.User'

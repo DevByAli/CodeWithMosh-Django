@@ -167,3 +167,10 @@ SIMPLE_JWT = {
 
 # This is now the AUTH USER Model going to use.
 AUTH_USER_MODEL = 'core.User'
+
+
+DJOSER = {
+    'SERIALIZERS': {
+        'user_create': 'core.serializers.UserCreatePasswordRetypeSerializer'
+    }
+}

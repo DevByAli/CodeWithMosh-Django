@@ -95,6 +95,7 @@ class CustomerAdmin(admin.ModelAdmin):
     list_select_related = ['user']
     ordering = ["user__first_name", "user__last_name"]
     search_fields = ['user__first_name__istartswith', 'user__last_name__istartswith', 'user__email']
+    autocomplete_fields = ['user']
     
     @admin.display(ordering='orders')
     def orders(self, customer):

@@ -88,3 +88,8 @@ class CartItemViewSet(ModelViewSet):
         return CartItem.objects \
                 .select_related('product') \
                 .filter(cart_id=self.kwargs['cart_pk'])
+                
+
+class CustomerViewSet(CreateModelMixin, UpdateModelMixin, RetrieveModelMixin, GenericViewSet):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer

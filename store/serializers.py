@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from django.http import Http404
 from rest_framework import serializers
 from decimal import Decimal
 from django.shortcuts import *
@@ -76,10 +77,11 @@ class AddCartItemSerializer(serializers.ModelSerializer):
     product_id = serializers.IntegerField()
     
     # validate_{field_name} is the to validate a particular field
-    # def validate_product_id(self, value):
-    #     if not Product.objects.filter(pk=value).exists():
-    #         raise serializers.ValidationError(detail="Product of given ID was not found", code=404)
-    #     return value
+    def validate_product_id(self, value):
+        if not Product.objects.filter(pk=value).exists():
+            # More elegant way to raise exception from serializer
+            raise Http404("Product of given ID was not found")
+        return value
         
     
     def save(self, **kwargs):
@@ -87,10 +89,10 @@ class AddCartItemSerializer(serializers.ModelSerializer):
         quantity = self.validated_data['quantity']
         cart_id = self.context['cart_id']
 
-        get_object_or_404(Product, pk=product_id)
+        # get_object_or_404(Product, pk=product_id)
         
         try:
-            cart_item = CartItem.objects.get(cart_id=cart_id)
+            cart_item = CartItem.objects.get(cart_id=cart_id, product_id=product_id)
             cart_item.quantity += quantity
             cart_item.save()
             

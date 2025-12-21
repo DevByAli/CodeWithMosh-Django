@@ -6,8 +6,9 @@ from rest_framework.mixins import *
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from .permissions import IsAdminOrReadOnly
 from .models import *
 from .serializers import *
 from .filter import *
@@ -17,6 +18,7 @@ class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     pagination_class = DefaultPagination
+    permission_classes = [IsAdminOrReadOnly]
     # pagination_class = PageNumberPagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = ProductFilter
@@ -41,6 +43,7 @@ class CollectionViewSet(ModelViewSet):
     queryset = Collection.objects.annotate(product_count=Count('products'))
     serializer_class = CollectionSerializer
     pagination_class = DefaultPagination
+    permission_classes = [IsAdminOrReadOnly]
     
     
     def destroy(self, request, *args, **kwargs):
@@ -96,7 +99,7 @@ class CartItemViewSet(ModelViewSet):
 class CustomerViewSet(CreateModelMixin, UpdateModelMixin, RetrieveModelMixin, GenericViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
     
     
     # This is the rule base permissions
@@ -111,7 +114,7 @@ class CustomerViewSet(CreateModelMixin, UpdateModelMixin, RetrieveModelMixin, Ge
 
     # if detail=True means http://localhost:8000/store/customer/{customer_id}/me/
     # else details=False means http://localhost:8000/store/customer/me/
-    @action(detail=False, methods=['GET', 'PUT'])
+    @action(detail=False, methods=['GET', 'PUT'], permission_classes=[IsAuthenticated])
     def me(self, request: Request):
         (customer, created) = Customer.objects.get_or_create(user_id=request.user.id)
 

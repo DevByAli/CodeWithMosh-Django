@@ -174,6 +174,7 @@ AUTH_USER_MODEL = 'core.User'
 # https://djoser.readthedocs.io/en/latest/getting_started.html
 DJOSER = {
     'SERIALIZERS': {
-        'user_create': 'core.serializers.UserCreatePasswordRetypeSerializer'
+        'user_create': 'core.serializers.UserCreatePasswordRetypeSerializer',
+        'current_user': 'core.serializers.UserSerializer',
     }
 }

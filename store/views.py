@@ -6,6 +6,7 @@ from rest_framework.mixins import *
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from .models import *
 from .serializers import *
@@ -95,6 +96,17 @@ class CartItemViewSet(ModelViewSet):
 class CustomerViewSet(CreateModelMixin, UpdateModelMixin, RetrieveModelMixin, GenericViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
+    permission_classes = [IsAuthenticated]
+    
+    
+    # This is the rule base permissions
+    # def get_permissions(self):
+    #     if self.action == 'me':
+    #         return [IsAuthenticated()]
+
+    #     if self.request.method == 'GET':
+    #         return [AllowAny()] # REMEMBER!!! Pass the object AllowAny() not class AllowAny
+    #     return [IsAuthenticated()]
     
 
     # if detail=True means http://localhost:8000/store/customer/{customer_id}/me/

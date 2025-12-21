@@ -1,8 +1,10 @@
 from django.db.models import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework.mixins import *
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from .models import *
@@ -93,3 +95,21 @@ class CartItemViewSet(ModelViewSet):
 class CustomerViewSet(CreateModelMixin, UpdateModelMixin, RetrieveModelMixin, GenericViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
+    
+
+    # if detail=True means http://localhost:8000/store/customer/{customer_id}/me/
+    # else details=False means http://localhost:8000/store/customer/me/
+    @action(detail=False, methods=['GET', 'PUT'])
+    def me(self, request: Request):
+        (customer, created) = Customer.objects.get_or_create(user_id=request.user.id)
+
+        if request.method == 'GET':
+            serializer = CustomerSerializer(customer)
+            return Response(serializer.data)
+            
+        elif request.method == 'PUT':
+            serializer = CustomerSerializer(customer, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            
+            return Response(serializer.data)

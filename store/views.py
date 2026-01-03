@@ -140,7 +140,7 @@ class CustomerViewSet(CreateModelMixin, UpdateModelMixin, RetrieveModelMixin, Ge
     
 class OrderViewSet(ModelViewSet):
     # This restricts the request method
-    http_method_names = ['get', 'patch', 'delete', 'head', 'options']
+    http_method_names = ['get', 'patch', 'post', 'delete', 'head', 'options']
     serializer_class = OrderSerializer
     # permission_classes = [IsAuthenticated]
     

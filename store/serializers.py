@@ -4,6 +4,7 @@ from django.http import Http404
 from rest_framework import serializers
 from decimal import Decimal
 from django.shortcuts import *
+from .signals import sig_order_created
 from .models import *
 
 
@@ -180,5 +181,7 @@ class CreateOrderSerializer(serializers.Serializer):
             OrderItem.objects.bulk_create(order_items)
 
             Cart.objects.filter(pk=cart_id).delete()
+            
+            sig_order_created.send_robust(self.__class__, order=order)
             
             return order

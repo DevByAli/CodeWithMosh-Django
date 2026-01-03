@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import Customer
+from store.models import Customer
 
 
 # After creating the signal it should be register in app.

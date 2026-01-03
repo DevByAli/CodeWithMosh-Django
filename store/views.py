@@ -6,9 +6,9 @@ from rest_framework.mixins import *
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser, DjangoModelPermissions
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
-from .permissions import IsAdminOrReadOnly
+from .permissions import IsAdminOrReadOnly, FullDjangoModelPermissions
 from .models import *
 from .serializers import *
 from .filter import *
@@ -99,11 +99,13 @@ class CartItemViewSet(ModelViewSet):
 class CustomerViewSet(CreateModelMixin, UpdateModelMixin, RetrieveModelMixin, GenericViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [FullDjangoModelPermissions]
     
     
     # This is the rule base permissions
     # def get_permissions(self):
+    #     if self.request.user.is_staff:
+    #         return [IsAdminUser()]
     #     if self.action == 'me':
     #         return [IsAuthenticated()]
 

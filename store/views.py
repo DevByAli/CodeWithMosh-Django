@@ -118,7 +118,7 @@ class CustomerViewSet(CreateModelMixin, UpdateModelMixin, RetrieveModelMixin, Ge
     # else details=False means http://localhost:8000/store/customer/me/
     @action(detail=False, methods=['GET', 'PUT'], permission_classes=[IsAuthenticated])
     def me(self, request: Request):
-        (customer, created) = Customer.objects.get_or_create(user_id=request.user.id)
+        customer = Customer.objects.get(user_id=request.user.id)
 
         if request.method == 'GET':
             serializer = CustomerSerializer(customer)
@@ -184,5 +184,5 @@ class OrderViewSet(ModelViewSet):
         # Command Query Principle: Says either the method query data or perform any operation 
         # in a particular method not do both. 
         # We will come later and will fix it.
-        (customer_id, created) = Customer.objects.only('id').get_or_create(user_id=user.id)
+        customer_id = Customer.objects.only('id').get(user_id=user.id)
         return queryset.filter(customer_id=customer_id)

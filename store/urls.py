@@ -10,6 +10,7 @@ router.register('products', views.ProductViewSet, basename='product')
 router.register('collections', views.CollectionViewSet)
 router.register('cart', views.CartViewSet)
 router.register('customer', views.CustomerViewSet)
+router.register('orders', views.OrderViewSet)
 
 """
 DOCS: for nested router search here: https://github.com/alanjds/drf-nested-routers

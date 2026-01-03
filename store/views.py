@@ -136,3 +136,9 @@ class CustomerViewSet(CreateModelMixin, UpdateModelMixin, RetrieveModelMixin, Ge
     def history(self, request, **kwargs):
         pk = kwargs.get('pk')
         return Response(f"History of user {pk}")
+    
+    
+class OrderViewSet(ModelViewSet):
+    queryset = Order.objects.prefetch_related('items').all()
+    serializer_class = OrderSerializer
+    

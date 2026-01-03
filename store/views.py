@@ -8,7 +8,7 @@ from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser, DjangoModelPermissions
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
-from .permissions import IsAdminOrReadOnly, FullDjangoModelPermissions
+from .permissions import IsAdminOrReadOnly, FullDjangoModelPermissions, ViewCustomerHistoryPermissions
 from .models import *
 from .serializers import *
 from .filter import *
@@ -99,7 +99,7 @@ class CartItemViewSet(ModelViewSet):
 class CustomerViewSet(CreateModelMixin, UpdateModelMixin, RetrieveModelMixin, GenericViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
-    permission_classes = [FullDjangoModelPermissions]
+    permission_classes = [IsAdminUser]
     
     
     # This is the rule base permissions
@@ -130,3 +130,9 @@ class CustomerViewSet(CreateModelMixin, UpdateModelMixin, RetrieveModelMixin, Ge
             serializer.save()
             
             return Response(serializer.data)
+        
+    
+    @action(detail=True, permission_classes=[ViewCustomerHistoryPermissions])
+    def history(self, request, **kwargs):
+        pk = kwargs.get('pk')
+        return Response(f"History of user {pk}")

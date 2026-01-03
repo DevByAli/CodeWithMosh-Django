@@ -81,6 +81,13 @@ class Customer(models.Model):
     class Meta:
         ordering = ['user__first_name', 'user__last_name']
 
+        # Apply migration after adding permissions.
+        # Use can find permissions in auth_permissions model.
+        permissions = [
+            # ('value will use in code', 'description of permission')
+            ('view_history', 'Can view history')
+        ]
+
 class Order(models.Model):
     PAYMENT_PENDING = 'P'
     PAYMENT_COMPLETE = 'C'

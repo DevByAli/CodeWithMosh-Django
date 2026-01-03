@@ -15,3 +15,9 @@ class FullDjangoModelPermissions(permissions.DjangoModelPermissions):
     def __init__(self):
         # User can only has the `view` access on endpoint.
         self.perms_map["GET"] = ['%(app_label)s.view_%(model_name)s']
+        
+        
+class ViewCustomerHistoryPermissions(permissions.BasePermission):
+    def has_permission(self, request, view):
+        # app.permission_name
+        return request.user.has_perm('store.view_history')

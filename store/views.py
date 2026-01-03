@@ -139,6 +139,6 @@ class CustomerViewSet(CreateModelMixin, UpdateModelMixin, RetrieveModelMixin, Ge
     
     
 class OrderViewSet(ModelViewSet):
-    queryset = Order.objects.prefetch_related('items').all()
+    queryset = Order.objects.prefetch_related('items__product').all()
     serializer_class = OrderSerializer
     

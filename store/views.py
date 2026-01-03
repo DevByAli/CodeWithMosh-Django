@@ -139,6 +139,20 @@ class CustomerViewSet(CreateModelMixin, UpdateModelMixin, RetrieveModelMixin, Ge
     
     
 class OrderViewSet(ModelViewSet):
-    queryset = Order.objects.prefetch_related('items__product').all()
     serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
     
+    
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Order.objects.prefetch_related('items__product').all()
+        
+        if user.is_staff:
+            return queryset
+        
+        # Here `get_or_create` is voilating the Command Query Principle.
+        # Command Query Principle: Says either the method query data or perform any operation 
+        # in a particular method not do both. 
+        # We will come later and will fix it.
+        (customer_id, created) = Customer.objects.only('id').get_or_create(user_id=user.id)
+        return queryset.filter(customer_id=customer_id)

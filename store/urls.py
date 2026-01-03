@@ -6,11 +6,13 @@ from . import views
 
 router = routers.DefaultRouter()
 
+# `basename` actually used by django for naming the url list product-list, product-detail
+
 router.register('products', views.ProductViewSet, basename='product')
 router.register('collections', views.CollectionViewSet)
 router.register('cart', views.CartViewSet)
 router.register('customer', views.CustomerViewSet)
-router.register('orders', views.OrderViewSet)
+router.register('orders', views.OrderViewSet, basename='orders')
 
 """
 DOCS: for nested router search here: https://github.com/alanjds/drf-nested-routers

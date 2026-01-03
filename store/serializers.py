@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 from rest_framework import serializers
@@ -138,3 +139,38 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['id', 'customer', 'placed_at', 'payment_status', 'items', 'total']
+        
+        
+class CreateOrderSerializer(serializers.Serializer):
+    cart_id = serializers.UUIDField()
+    
+    
+    def validate_cart_id(self, value):
+        if not Cart.objects.filter(pk=value).exists():
+            raise Http404("Cart not found.")
+        return value
+    
+    def save(self, **kwargs):
+        with transaction.atomic():
+            cart_id = self.validated_data['cart_id']
+            user_id = self.context.get('user_id')
+            
+            cart_items = CartItem.objects.select_related('product').filter(cart_id=cart_id)
+            if cart_items.count() == 0:
+                raise Http404("No item found in cart.")
+            
+            (customer, created) = Customer.objects.get_or_create(user_id=user_id)
+            order = Order.objects.create(customer=customer)
+            
+            order_items = [
+                OrderItem(
+                    order=order,
+                    product=item.product,
+                    quantiy=item.quantity,
+                    unit_price=item.product.unit_price
+                ) for item in cart_items
+            ]
+            
+            OrderItem.objects.bulk_create(order_items)
+
+            Cart.objects.filter(pk=cart_id).delete()

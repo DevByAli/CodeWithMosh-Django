@@ -16,14 +16,29 @@ class CollectionSerializer(serializers.ModelSerializer):
     product_count = serializers.IntegerField(default=0, read_only=True) # read_only make the field not required during creating the collection
     
 
+class ProductImageSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = ProductImage
+        fields = ['id', 'image']
+        
+    
+    def create(self, validated_data):
+        product_id = self.context['product_id']
+        product = get_object_or_404(Product, pk=product_id)
+        
+        return ProductImage.objects.create(product=product, **validated_data)
+    
 class ProductSerializer(serializers.ModelSerializer):
+    images = ProductImageSerializer(many=True, read_only=True)
     class Meta:
         model = Product
 
         # Order of fields matter.
         # Include the fields in 'fields' list if it is customized like 'unit_price_with_tax'
         # NOT RECOMMENDED: fields = '__all__'
-        fields = ['id', 'title', 'description', 'unit_price', 'inventory', 'unit_price_with_tax', 'collection']
+        fields = ['id', 'title', 'description', 'unit_price', 'inventory', 'unit_price_with_tax', 'collection', 'images']
         
     unit_price_with_tax = serializers.SerializerMethodField(method_name='get_unit_price_with_tax') # method_name is required when method_name != "get_{field_name}"
 

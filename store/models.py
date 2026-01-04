@@ -45,6 +45,14 @@ class Product(models.Model):
     
     class Meta:
         ordering = ['title']
+        
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
+
+    # `upload_to` value is relative to MEDIA_ROOT in `settings.py` 
+    image = models.ImageField(upload_to='store/images')
+
 
 class Customer(models.Model):
     MEMBERSHIP_BRONZE = 'B'

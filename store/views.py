@@ -15,7 +15,7 @@ from .filter import *
 from .pagination import *
 
 class ProductViewSet(ModelViewSet):
-    queryset = Product.objects.all()
+    queryset = Product.objects.prefetch_related('images').all()
     serializer_class = ProductSerializer
     pagination_class = DefaultPagination
     permission_classes = [IsAdminOrReadOnly]
@@ -38,6 +38,22 @@ class ProductViewSet(ModelViewSet):
                 status=status.HTTP_405_METHOD_NOT_ALLOWED)
             
         return super().destroy(request, *args, **kwargs)
+
+
+class ProductImageViewSet(ModelViewSet):
+    http_method_names = ['get', 'post', 'delete', 'head', 'options']
+    serializer_class = ProductImageSerializer
+    permission_classes = [IsAdminOrReadOnly]
+    
+    
+    def get_queryset(self):
+        product_id = self.kwargs['product_pk']
+        return ProductImage.objects.filter(product_id=product_id)
+    
+
+    def get_serializer_context(self):
+        return {'product_id': self.kwargs['product_pk']}
+    
 
 class CollectionViewSet(ModelViewSet):
     queryset = Collection.objects.annotate(product_count=Count('products'))

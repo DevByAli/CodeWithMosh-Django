@@ -19,7 +19,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from store.models import Product, Customer, Address, OrderItem, Order, Collection
 from tags.models import TaggedItem
-from django.core.mail import send_mail, mail_admins, BadHeaderError
+from django.core.mail import send_mail, mail_admins, EmailMessage, BadHeaderError
 from django.conf import settings
 
 
@@ -88,7 +88,12 @@ def say_hello(request):
 
     try:
         # send_mail('subject', 'message', settings.DEFAULT_FROM_EMAIL, ['ali@gmail.com'])
-        mail_admins('subject', 'message', html_message='<h1>Hello</h1>')
+        # mail_admins('subject', 'message', html_message='<h1>Hello</h1>')
+        message = EmailMessage('subject', 'message body', 'from@ali.com', ['ali@gmail.com'])
+        message.attach_file('playground/static/images/images.webp')
+        message.cc = ['cc1@domain.com', 'cc2@domain.com']
+        message.bcc = ['bcc1@domain.com', 'bcc2@domain.com']
+        message.send()
     except BadHeaderError:
         pass
 

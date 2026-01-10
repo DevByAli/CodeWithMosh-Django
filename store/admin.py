@@ -21,11 +21,19 @@ class InventoryFilter(admin.SimpleListFilter):
             return queryset.filter(inventory__lt=10)
         if self.value() == '<20':
             return queryset.filter(inventory__lt=20, inventory__gt=10)
+        
+class ProductImageInline(admin.TabularInline):
+    model = models.ProductImage
+    readonly_fields = ['thumbnail']
+    
+    def thumbnail(self, instance: models.ProductImage):
+        return format_html('<img src="{}" class="thumbnail" />', instance.image.url)
 
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
     actions = ['clear_inventory']
     autocomplete_fields = ['collection', 'promotions']
+    inlines = [ProductImageInline]
     # exclude = ['promotions'] # Only include exlude these fields
     # fields = ['title', 'slug'] # Only includes these fields
     list_display = ["title", "unit_price", "inventory_status", "collection_title"]
@@ -59,6 +67,12 @@ class ProductAdmin(admin.ModelAdmin):
             f"{updated_count} products were successfully updated.",
             messages.SUCCESS
         )
+        
+    # This is how we add the custom styles for a specific admin app.
+    class Media:
+        css = {
+            'all': ['store/css/product.css',]
+        }
 
 @admin.register(models.Collection)
 class CollectionAdmin(admin.ModelAdmin):

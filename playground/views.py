@@ -19,6 +19,8 @@ from django.contrib.contenttypes.models import ContentType
 
 from store.models import Product, Customer, Address, OrderItem, Order, Collection
 from tags.models import TaggedItem
+from django.core.mail import send_mail, mail_admins, BadHeaderError
+from django.conf import settings
 
 
 # Create your views here.
@@ -84,8 +86,10 @@ def say_hello(request):
     # rows = [{"id": row[0], "title": row[1]} for row in rows]
 
 
-
-
-
+    try:
+        # send_mail('subject', 'message', settings.DEFAULT_FROM_EMAIL, ['ali@gmail.com'])
+        mail_admins('subject', 'message', html_message='<h1>Hello</h1>')
+    except BadHeaderError:
+        pass
 
     return render(request, "hello.html", {"products": None})

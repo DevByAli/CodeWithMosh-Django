@@ -193,7 +193,7 @@ DJOSER = {
 # https://github.com/rnwood/smtp4dev/blob/master/docs/Installation.md
 # docker run --rm -it -p 5000:80 -p 2525:25 -p 110:110 rnwood/smtp4dev
 
-EMAIL_BACKEND = 'djanog.core.mail.backends.stmp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # Your email provider's SMTP server (e.g., smtp.gmail.com, smtp.office365.com)
 # EMAIL_HOST = 'smtp.example.com' 
@@ -213,3 +213,10 @@ EMAIL_HOST_PASSWORD = ''
 
 # Default email address for your application to send from (optional)
 DEFAULT_FROM_EMAIL = 'ali@domain.com' 
+
+
+# Use for sending mail to admin
+ADMINS = [
+    # (admin_name, admin_mail)
+    ('Ali', 'ali@admin.com')
+]

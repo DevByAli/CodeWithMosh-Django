@@ -220,3 +220,6 @@ ADMINS = [
     # (admin_name, admin_mail)
     ('Ali', 'ali@admin.com')
 ]
+
+# We are using redis as broker it could be rabbitMQ
+CELERY_BROKER_URL = 'redis://localhost:6379/1'

@@ -21,6 +21,7 @@ from store.models import Product, Customer, Address, OrderItem, Order, Collectio
 from tags.models import TaggedItem
 from django.core.mail import send_mail, mail_admins, EmailMessage, BadHeaderError
 from django.conf import settings
+from templated_mail.mail import BaseEmailMessage
 
 
 # Create your views here.
@@ -87,13 +88,23 @@ def say_hello(request):
 
 
     try:
-        # send_mail('subject', 'message', settings.DEFAULT_FROM_EMAIL, ['ali@gmail.com'])
-        # mail_admins('subject', 'message', html_message='<h1>Hello</h1>')
-        message = EmailMessage('subject', 'message body', 'from@ali.com', ['ali@gmail.com'])
-        message.attach_file('playground/static/images/images.webp')
-        message.cc = ['cc1@domain.com', 'cc2@domain.com']
-        message.bcc = ['bcc1@domain.com', 'bcc2@domain.com']
-        message.send()
+    #     # send_mail('subject', 'message', settings.DEFAULT_FROM_EMAIL, ['ali@gmail.com'])
+    #     # mail_admins('subject', 'message', html_message='<h1>Hello</h1>')
+    #     message = EmailMessage('subject', 'message body', 'from@ali.com', ['ali@gmail.com'])
+    #     message.attach_file('playground/static/images/images.webp')
+    #     message.cc = ['cc1@domain.com', 'cc2@domain.com']
+    #     message.bcc = ['bcc1@domain.com', 'bcc2@domain.com']
+    #     message.send()
+    
+        message = BaseEmailMessage(
+            template_name='emails/hello.html',
+            context={'name': 'Ali'},
+            from_email=""
+        )
+
+        message.send(to=['ali@gmail.com'], 
+                     cc=["testcc@gmail.com"],
+                     from_email="ali.send@gmail.com")
     except BadHeaderError:
         pass
 

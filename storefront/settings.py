@@ -103,13 +103,16 @@ WSGI_APPLICATION = 'storefront.wsgi.application'
 #     }
 # }
 
+import os
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'storefront',
-        'HOST': 'localhost',
-        'USER': 'django',
-        'PASSWORD': '123',
+        'NAME': os.environ.get('DATABASE_NAME', 'storefront'),
+        'USER': os.environ.get('DATABASE_USER', 'django'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'djangopass'),
+        'HOST': os.environ.get('DATABASE_HOST', 'db'),
+        'PORT': os.environ.get('DATABASE_PORT', '3306'),
     }
 }
 

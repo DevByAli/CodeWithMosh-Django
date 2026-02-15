@@ -1,0 +1,35 @@
+services:
+  db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: storefront
+      MYSQL_USER: django
+      MYSQL_PASSWORD: djangopass
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_HOST: db
+      DATABASE_NAME: storefront
+      DATABASE_USER: django
+      DATABASE_PASSWORD: djangopass
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  mysql_data:

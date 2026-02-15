@@ -87,25 +87,28 @@ def say_hello(request):
     # rows = [{"id": row[0], "title": row[1]} for row in rows]
 
 
-    try:
-    #     # send_mail('subject', 'message', settings.DEFAULT_FROM_EMAIL, ['ali@gmail.com'])
-    #     # mail_admins('subject', 'message', html_message='<h1>Hello</h1>')
-    #     message = EmailMessage('subject', 'message body', 'from@ali.com', ['ali@gmail.com'])
-    #     message.attach_file('playground/static/images/images.webp')
-    #     message.cc = ['cc1@domain.com', 'cc2@domain.com']
-    #     message.bcc = ['bcc1@domain.com', 'bcc2@domain.com']
-    #     message.send()
+    # try:
+    # #     # send_mail('subject', 'message', settings.DEFAULT_FROM_EMAIL, ['ali@gmail.com'])
+    # #     # mail_admins('subject', 'message', html_message='<h1>Hello</h1>')
+    # #     message = EmailMessage('subject', 'message body', 'from@ali.com', ['ali@gmail.com'])
+    # #     message.attach_file('playground/static/images/images.webp')
+    # #     message.cc = ['cc1@domain.com', 'cc2@domain.com']
+    # #     message.bcc = ['bcc1@domain.com', 'bcc2@domain.com']
+    # #     message.send()
     
-        message = BaseEmailMessage(
-            template_name='emails/hello.html',
-            context={'name': 'Ali'},
-            from_email=""
-        )
+    #     message = BaseEmailMessage(
+    #         template_name='emails/hello.html',
+    #         context={'name': 'Ali'},
+    #         from_email=""
+    #     )
 
-        message.send(to=['ali@gmail.com'], 
-                     cc=["testcc@gmail.com"],
-                     from_email="ali.send@gmail.com")
-    except BadHeaderError:
-        pass
+    #     message.send(to=['ali@gmail.com'], 
+    #                  cc=["testcc@gmail.com"],
+    #                  from_email="ali.send@gmail.com")
+    # except BadHeaderError:
+    #     pass
+
+    from .tasks import fun
+    fun.delay()
 
     return render(request, "hello.html", {"products": None})

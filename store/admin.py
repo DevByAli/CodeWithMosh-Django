@@ -180,7 +180,7 @@ class OrderAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(
-            order_items=Count('orderitem__product')
+            order_items=Count('items__product')
         )
 
 

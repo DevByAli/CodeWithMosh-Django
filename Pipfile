@@ -24,6 +24,7 @@ django-debug-toolbar = "*"
 faker = "*"
 pytest = "*"
 pytest-django = "*"
+pytest-watcher = "*"
 
 [requires]
 python_version = "3.13"

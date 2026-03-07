@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_filters',
+    'django_celery_beat',
     'rest_framework',
     'djoser',
     'corsheaders',
@@ -228,11 +229,11 @@ ADMINS = [
 CELERY_BROKER_URL = 'redis://redis:6379/1'
 
 # This is the one way to perform periodic tasks
-CELERY_BEAT_SCHEDULE = {
-    'notify_customer': {
-        'task': 'playground.tasks.notify_customer',
-        'schedule': 5, # every 5 seconds
-        'args': ['Hello world'],
-        # 'kwargs': []
-    }
-}
+# CELERY_BEAT_SCHEDULE = {
+#     'notify_customer': {
+#         'task': 'playground.tasks.notify_customer',
+#         'schedule': 5, # every 5 seconds
+#         'args': ['Hello world'],
+#         # 'kwargs': []
+#     }
+# }

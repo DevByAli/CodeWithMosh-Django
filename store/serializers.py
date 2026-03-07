@@ -10,7 +10,7 @@ from .models import *
 
 class CollectionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Product
+        model = Collection
         fields = ['id', 'title', 'product_count']
     
     product_count = serializers.IntegerField(default=0, read_only=True) # read_only make the field not required during creating the collection

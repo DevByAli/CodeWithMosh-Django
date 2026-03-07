@@ -16,7 +16,10 @@ services:
       retries: 10
 
   web:
-    build: .
+    build:
+      context: .
+      # Switch this to 'production' for your prod deployment
+      target: development
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app

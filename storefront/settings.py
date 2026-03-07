@@ -226,3 +226,13 @@ ADMINS = [
 
 # We are using redis as broker it could be rabbitMQ
 CELERY_BROKER_URL = 'redis://redis:6379/1'
+
+# This is the one way to perform periodic tasks
+CELERY_BEAT_SCHEDULE = {
+    'notify_customer': {
+        'task': 'playground.tasks.notify_customer',
+        'schedule': 5, # every 5 seconds
+        'args': ['Hello world'],
+        # 'kwargs': []
+    }
+}

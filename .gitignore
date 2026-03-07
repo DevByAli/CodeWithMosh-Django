@@ -1,5 +1,11 @@
-*/__pycache__/*
-*.txt
-media/
-*/static/
-.venv
+# Ignore in every subdirectory
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/*.pyd
+
+# Other files
+**/*.txt
+**/media
+**/.venv
+.git

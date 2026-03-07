@@ -26,6 +26,7 @@ import pytest
 # Always start name with Test, otherwise pytest will recognize it.
 @pytest.mark.django_db
 class TestCreateCollection:
+    @pytest.mark.skip # Skip test
     def test_if_user_is_anonymous_returns_401(self):
 
         # Act

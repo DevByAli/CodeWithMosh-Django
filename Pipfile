@@ -16,10 +16,14 @@ django-cors-headers = "*"
 django-templated-mail = "*"
 redis = "*"
 celery = "*"
+django-celery-beat = "*"
+flower = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
 faker = "*"
+pytest = "*"
+pytest-django = "*"
 
 [requires]
 python_version = "3.13"

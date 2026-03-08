@@ -10,6 +10,10 @@
         - Perform the Behaviour
     Assert
         - Check the Behaviour
+
+Test Database:
+- Pytest-django creates the test database once per session and uses transactional rollbacks 
+- to provide a clean environment for each individual test.
     
 Run specific Test:
 - pytest store/tests

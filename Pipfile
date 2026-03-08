@@ -25,6 +25,7 @@ faker = "*"
 pytest = "*"
 pytest-django = "*"
 pytest-watcher = "*"
+model-bakery = "*"
 
 [requires]
 python_version = "3.13"

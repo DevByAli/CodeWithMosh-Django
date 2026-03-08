@@ -25,12 +25,22 @@ Run Conitnous Testing via Pytest-Watcher
 from django.contrib.auth.models import User
 from rest_framework import status
 import pytest
+from store.models import Collection
+from model_bakery import baker
+
 
 @pytest.fixture
 def create_collection(api_client):
     def create_collection(collection):
         return api_client.post('/store/collections/', collection)
     return create_collection
+
+
+@pytest.fixture
+def get_collection(api_client):
+    def get_collection(collection_id):
+        return api_client.get(f'/store/collections/{collection_id}/')
+    return get_collection
 
 # Always start name with Test, otherwise pytest will recognize it.
 @pytest.mark.django_db
@@ -76,3 +86,36 @@ class TestCreateCollection:
         # Assert
         assert response.status_code == status.HTTP_201_CREATED
         assert response.data.get('id', 0) > 0
+
+
+@pytest.mark.django_db
+class TestReteriveCollection:
+    def test_if_collection_exists_return_200(self, get_collection):
+        """
+        # response = create_collection({'title': 'a'})
+
+        What is bad with this approach is that it also testing the POST endpoint.
+        If POST endpoint fail, it will also fails this test, which is not related to
+        each other.
+        """
+        
+        # Collection.objects.create(title="a") # Make the test more noisy, if has mutiple fields to populate.
+
+        collection = baker.make(Collection)
+
+        response = get_collection(collection.id)
+
+        assert response.status_code == status.HTTP_200_OK
+        # assert response.data.get('id', 0) == collection.id
+        # assert response.data.get('title', None) == collection.title
+
+        assert response.data == {
+            'id': collection.id,
+            'title': collection.title,
+            'product_count': 0
+        }
+
+    def test_if_collection_not_exists_return_404(self, get_collection):
+        response = get_collection(1)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
